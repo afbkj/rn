@@ -12,4 +12,4 @@ const UserSchema = new mongoose.Schema<IUser>({
   role: { type: String, default: "public" },
 });
 
-export default mongoose.model<IUser>("User", UserSchema);
+export default mongoose.model<IUser>("User", UserSchema); 
