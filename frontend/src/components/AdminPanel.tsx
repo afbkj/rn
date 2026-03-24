@@ -2,23 +2,22 @@ import { useState } from "react";
 import axios from "axios";
 import type { LocationType } from "../types/Location";
 
+type Props = {
+    clickedPos: { lat: number; lng: number } | null;
+    setLocations: React.Dispatch<React.SetStateAction<LocationType[]>>;
+};
+
 export default function AdminPanel({
     clickedPos,
     setLocations,
-}: {
-    clickedPos: { lat: number; lng: number } | null;
-    setLocations: React.Dispatch<React.SetStateAction<LocationType[]>>;
-}) {
-    const token = localStorage.getItem("token");
-
+}: Props) {
     const [name, setName] = useState("");
     const [seats, setSeats] = useState(0);
 
+    const token = localStorage.getItem("token");
+
     const handleAdd = async () => {
-        if (!clickedPos) {
-            alert("Click map first");
-            return;
-        }
+        if (!clickedPos) return alert("Click map first");
 
         const res = await axios.post(
             "http://localhost:5000/locations",
@@ -34,38 +33,25 @@ export default function AdminPanel({
         );
 
         setLocations((prev) => [...prev, res.data]);
-
-        setName("");
-        setSeats(0);
     };
 
     return (
-        <div className="absolute top-20 left-6 bg-white/80 backdrop-blur-md p-5 rounded-xl shadow-lg w-64">
-            <h2>Admin Panel</h2>
+        <div className="absolute top-4 left-4 bg-white p-4 rounded shadow z-50">
+            <h3>Admin Panel</h3>
 
-            <input className="w-full mb-2 p-2 rounded border"
+            <input
                 placeholder="Place name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
             />
 
-            <input className="w-full mb-2 p-2 rounded border"
+            <input
                 type="number"
                 value={seats}
                 onChange={(e) => setSeats(Number(e.target.value))}
             />
 
-            <button className="w-full mb-2 p-2 rounded border" onClick={handleAdd}>Add</button>
-
-            <button className="w-full bg-blue-500 text-white py-2 rounded mb-2"
-                onClick={() => {
-                    localStorage.clear();
-                    location.reload();
-                }}
-            >
-                Logout
-            </button>
-            
+            <button onClick={handleAdd}>Add</button>
         </div>
     );
 }
