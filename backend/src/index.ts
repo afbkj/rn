@@ -65,11 +65,20 @@ const isAdmin = (req: any, res: Response, next: NextFunction) => {
 // 🗄️ DATABASE CONNECTION
 // =======================
 
-mongoose
-  .connect("mongodb+srv://mapadmin:test1234@cluster0.kpmgd2f.mongodb.net/?appName=Cluster0")
-  // 👉 Use your Atlas string if needed
-  // .connect("your_mongo_uri_here")
-  .then(() => console.log("MongoDB connected"))
+mongoose.connect(process.env.MONGO_URI!)
+  .then(async () => {
+    console.log("MongoDB connected");
+
+    const existing = await User.findOne({ email: "admin@test.com" });
+
+    if (!existing) {
+      await User.create({
+        email: "admin@test.com",
+        password: "123456"
+      });
+      console.log("Test user created");
+    }
+  })
   .catch((err) => console.log(err));
 
 
